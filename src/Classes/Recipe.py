@@ -4,4 +4,6 @@ class Recipe:
         self.recipeName = recipeName
         self.ingredients=ingredients
         self.instructions = instructions
+        self.restrictions = []
+        self.recipeAllergies = False
     
