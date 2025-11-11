@@ -31,7 +31,7 @@ def update_search(search_term, filter_nuts, filter_dairy, filter_gluten):
         ingredients_str = ', '.join(recipe.ingredients) if isinstance(recipe.ingredients, list) else str(recipe.ingredients)
         
         # Check if search term matches ingredients
-        if (search_term.lower() in ingredients_str.lower()):
+        if (search_term.lower() in ingredients_str.lower() or search_term.lower() in recipe.recipeName.lower()):
             
             # Check allergy restrictions if recipe has allergies
             skip_recipe = False
@@ -65,13 +65,9 @@ def save_to_list(recipe):
 #clear list of recipes for grocery list
 def clear_grocery_list():
     grocery_list.clear()
+    print("List Cleared")
 
 #generate grocery list from selected recipes
 def generate_grocery_list():
-    ingredients_total = set()
-    for recipe in grocery_list:
-        if isinstance(recipe.ingredients, list):
-            ingredients_total.update(recipe.ingredients)
-        else:
-            ingredients_total.add(recipe.ingredients)
-    return list(ingredients_total)
+    print("List Generated")
+   
