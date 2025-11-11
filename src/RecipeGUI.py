@@ -19,7 +19,7 @@ def opens_new_window():
     # opens a new window in front of the parent window
     newWindow = Toplevel(root)
     newWindow.title("View All Recipes")
-    newWindow.geometry("500x350")
+    newWindow.geometry("800x500")
     newWindow.resizable(False, False)
     newWindow.configure(bg="#f0f0f0")
     newWindow.grab_set()
@@ -31,9 +31,9 @@ def opens_new_window():
 
     # Allergy filter frame
     allergy_frame = tk.Frame(newWindow, bg="#ffffff", relief=tk.RAISED, bd=1)
-    allergy_frame.grid(row=0, column=0, columnspan=3, padx=15, pady=10, sticky="ew")
+    allergy_frame.grid(row=0, column=0, columnspan=3, padx=15, pady=10, sticky="w")
     
-    allegryLabel = Label(allergy_frame, text="Filter by Allergies:", background="#ffffff")
+    allegryLabel = Label(allergy_frame, text="Filter by Dietary Restrictions:", background="#ffffff")
     allegryLabel.pack(pady=5, anchor="center")
     
     checkbox_frame = tk.Frame(allergy_frame, bg="#ffffff")
@@ -53,22 +53,72 @@ def opens_new_window():
 
     nut_checkbox_var = BooleanVar()
     nut_allergy_checkbox = tk.Checkbutton(
-        checkbox_frame, text="Tree Nuts", variable=nut_checkbox_var, bg="#ffffff"
+        checkbox_frame, text="Nuts", variable=nut_checkbox_var, bg="#ffffff"
     )
     nut_allergy_checkbox.pack(side=tk.LEFT, padx=10)
     
     # Search frame
     search_frame = tk.Frame(newWindow, bg="#ffffff", relief=tk.RAISED, bd=1)
-    search_frame.grid(row=1, column=0, columnspan=3, padx=15, pady=10, sticky="ew")
+    search_frame.grid(row=1, column=0, columnspan=3, padx=15, pady=10, sticky="w")
     
-    search_box_label = Label(search_frame, text="Search Recipe:", background="#ffffff")
-    search_box_label.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
+    #search_box_label = Label(search_frame, text="Search Recipe:", background="#ffffff")
+    #search_box_label.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
     
     search_box = Entry(search_frame, width=30)
     search_box.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
     
-    search_button = Button(search_frame, text="Search")
+    #Search results frame
+    results_frame = tk.Frame(newWindow, bg="#f0f0f0")
+    results_frame.grid(row=2, column=0, columnspan=3, padx=10, pady=10, sticky="ws")
+
+    #ListBox with scroll bar with all eligible recipes
+    results_text_widget = tk.Listbox(results_frame, height=15, width=50)
+    results_text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    
+    scrollbar = tk.Scrollbar(results_frame, orient=tk.VERTICAL)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    results_text_widget.config(yscrollcommand=scrollbar.set)
+    scrollbar.config(command=results_text_widget.yview)
+    
+    # Function to populate listbox with all recipes (initial load)
+    def populate_all_recipes():
+        results_text_widget.delete(0, END) 
+        for recipe in RecipeLogic.book.recipes:
+            results_text_widget.insert(END, recipe.recipeName)
+    
+    # Load all recipes initially
+    populate_all_recipes()
+    
+    #search button functionality 
+    def search_recipes():
+        search_term = search_box.get().strip()
+        
+        # If search term is empty, show all recipes
+        if not search_term:
+            populate_all_recipes()
+            return
+            
+        results = RecipeLogic.update_search(
+            search_term,
+            nut_checkbox_var.get(),      
+            dairy_checkbox_var.get(),    
+            gluten_checkbox_var.get()   
+        )
+
+        # Clear previous results
+        results_text_widget.delete(0, END)
+
+        # Insert new results
+        for recipe in results:
+            results_text_widget.insert(END, recipe.recipeName)
+
+    search_button = Button(search_frame, text="Search", command=search_recipes)
     search_button.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
+    
+    show_all_button = Button(search_frame, text="Show All", command=populate_all_recipes)
+    show_all_button.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
+    
+
 
 viewAllRecipesButton = Button(root, text="View All Recipes", command=opens_new_window)
 viewAllRecipesButton.grid(row=0, column=0, columnspan=3, pady=10, sticky="ew", padx=20)
@@ -101,6 +151,9 @@ def submit_action():
     try:
         RecipeLogic.add_recipe(recipe_name, ingredients, instructions)
         print(f"Saved recipe: {recipe_name}")
+        #prints all recipes after adding a new one (for testing)
+        RecipeLogic.print_all_recipes() 
+        
     except Exception as e:
         print("Error saving recipe:", e)
 

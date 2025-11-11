@@ -13,4 +13,5 @@ bella
 
 
 anna
-- backend logic for second page
+- backend logic for second page, including search logic and generating a grocery list
+- added preexisting recipes to recipe book
