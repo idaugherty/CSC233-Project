@@ -1,17 +1,17 @@
 import tkinter as tk
-from tkinter import Toplevel, BooleanVar, END
-from tkinter.ttk import Button, Label, Entry
+from tkinter import Text, Toplevel, BooleanVar, END
+from tkinter.ttk import Button  # Only ttk.Button is safe
 import RecipeLogic
 
+# ===================== MAIN WINDOW =====================
 root = tk.Tk()
 root.title("Recipe Book App")
-root.geometry("800x500")
+root.geometry("900x500")
 root.resizable(False, False)
 root.configure(bg="#f0f0f0")
 
-# Creates a new window for adding recipes
+# ===================== ADD RECIPE WINDOW =====================
 def opens_new_window():
-    # opens a new window in front of the parent window
     newWindow = Toplevel(root)
     newWindow.title("Add Recipe")
     newWindow.geometry("500x450")
@@ -19,154 +19,121 @@ def opens_new_window():
     newWindow.configure(bg="#f0f0f0")
     newWindow.grab_set()
 
-    # Configure grid to center content
-    newWindow.grid_columnconfigure(0, weight=1)
-    newWindow.grid_columnconfigure(1, weight=1)
-    newWindow.grid_columnconfigure(2, weight=1)
-    
-    # Add a frame for form inputs
     form_frame = tk.Frame(newWindow, bg="#f0f0f0")
-    form_frame.grid(row=1, column=0, columnspan=1, padx=20, pady=10, sticky="nsew")
+    form_frame.grid(row=0, column=0, padx=20, pady=10, sticky="nsew")
 
-    recipeLabel = Label(form_frame, text="Recipe Name:", background="#f0f0f0")
-    recipeLabel.grid(padx=10, pady=8, row=0, column=0, sticky="e")
-    recipeEntryBox = Entry(form_frame, width=35)
-    recipeEntryBox.grid(padx=10, pady=8, row=0, column=1, sticky="w")
+    # Labels are tk.Label now
+    tk.Label(form_frame, text="Recipe Name:", bg="#f0f0f0").grid(row=0, column=0, sticky="e", padx=10, pady=8)
+    recipeEntryBox = tk.Entry(form_frame, width=35)
+    recipeEntryBox.grid(row=0, column=1, sticky="w", padx=10, pady=8)
 
-    ingredientsLabel = Label(form_frame, text="Ingredients:", background="#f0f0f0")
-    ingredientsLabel.grid(padx=10, pady=8, row=1, column=0, sticky="ne")
-    ingredientsTextWidget = tk.Text(form_frame, height=5, width=35)
-    ingredientsTextWidget.grid(padx=10, pady=8, row=1, column=1, sticky="w")
+    tk.Label(form_frame, text="Ingredients:", bg="#f0f0f0").grid(row=1, column=0, sticky="ne", padx=10, pady=8)
+    ingredientsTextWidget = Text(form_frame, height=5, width=35)
+    ingredientsTextWidget.grid(row=1, column=1, sticky="w", padx=10, pady=8)
 
-    instructionsLabel = Label(form_frame, text="Instructions:", background="#f0f0f0")
-    instructionsLabel.grid(padx=10, pady=8, row=2, column=0, sticky="ne")
-    instructionsTextWidget = tk.Text(form_frame, height=5, width=35)
-    instructionsTextWidget.grid(padx=10, pady=8, row=2, column=1, sticky="w")
-
+    tk.Label(form_frame, text="Instructions:", bg="#f0f0f0").grid(row=2, column=0, sticky="ne", padx=10, pady=8)
+    instructionsTextWidget = Text(form_frame, height=5, width=35)
+    instructionsTextWidget.grid(row=2, column=1, sticky="w", padx=10, pady=8)
 
     def submit_action():
-        """Collect field values and pass them to the logic module."""
         recipe_name = recipeEntryBox.get()
         ingredients = ingredientsTextWidget.get("1.0", "end-1c")
         instructions = instructionsTextWidget.get("1.0", "end-1c")
         try:
             RecipeLogic.add_recipe(recipe_name, ingredients, instructions)
-            print(f"Saved recipe: {recipe_name}")
-            #prints all recipes after adding a new one (for testing)
-            RecipeLogic.print_all_recipes() 
-            
+            RecipeLogic.print_all_recipes()
         except Exception as e:
             print("Error saving recipe:", e)
 
+    # ttk.Button is fine here
+    Button(newWindow, text="Submit", command=submit_action).grid(
+        row=3, column=0, columnspan=2, pady=15, sticky="ew", padx=20
+    )
 
-    # creating a submit button
-    submitButton = Button(newWindow, text="Submit", command=submit_action)
-    submitButton.grid(row=2, column=0, columnspan=3, pady=15, sticky="ew", padx=20)
-
-# Allergy filter frame
+# ===================== LEFT SIDE FRAMES =====================
 allergy_frame = tk.Frame(root, bg="#ffffff", relief=tk.RAISED, bd=1)
-allergy_frame.grid(row=0, column=0, columnspan=1, padx=15, pady=10, sticky="w")
-
-allergyLabel = Label(allergy_frame, text="Filter by Dietary Restrictions:", background="#ffffff")
-allergyLabel.pack(pady=5, anchor="center")
+allergy_frame.grid(row=0, column=0, padx=15, pady=5, sticky="nw")
+tk.Label(allergy_frame, text="Filter by Dietary Restrictions:", bg="#ffffff").pack(pady=5)
 
 checkbox_frame = tk.Frame(allergy_frame, bg="#ffffff")
-checkbox_frame.pack(pady=5, anchor="center")
-
+checkbox_frame.pack(pady=5)
 dairy_checkbox_var = BooleanVar()
-dairy_allergy_checkbox = tk.Checkbutton(checkbox_frame, text="Dairy", variable=dairy_checkbox_var, bg="#ffffff")
-dairy_allergy_checkbox.pack(side=tk.LEFT, padx=10)
-
+tk.Checkbutton(checkbox_frame, text="Dairy", variable=dairy_checkbox_var, bg="#ffffff").pack(side=tk.LEFT, padx=10)
 gluten_checkbox_var = BooleanVar()
-gluten_allergy_checkbox = tk.Checkbutton(checkbox_frame, text="Gluten", variable=gluten_checkbox_var, bg="#ffffff")
-gluten_allergy_checkbox.pack(side=tk.LEFT, padx=10)
-
+tk.Checkbutton(checkbox_frame, text="Gluten", variable=gluten_checkbox_var, bg="#ffffff").pack(side=tk.LEFT, padx=10)
 nut_checkbox_var = BooleanVar()
-nut_allergy_checkbox = tk.Checkbutton(checkbox_frame, text="Nuts", variable=nut_checkbox_var, bg="#ffffff")
-nut_allergy_checkbox.pack(side=tk.LEFT, padx=10)
+tk.Checkbutton(checkbox_frame, text="Nuts", variable=nut_checkbox_var, bg="#ffffff").pack(side=tk.LEFT, padx=10)
 
-# Search frame
 search_frame = tk.Frame(root, bg="#ffffff", relief=tk.RAISED, bd=1)
-search_frame.grid(row=1, column=0, columnspan=1, padx=15, pady=10, sticky="w")
+search_frame.grid(row=1, column=0, padx=15, pady=5, sticky="nw")
+search_box = tk.Entry(search_frame, width=20)
+search_box.pack(side=tk.LEFT, padx=5, pady=5)
+search_button = Button(search_frame, text="Search")
+search_button.pack(side=tk.LEFT, padx=5, pady=5)
+show_all_button = Button(search_frame, text="Show All")
+show_all_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-search_box = Entry(search_frame, width=20)
-search_box.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
-
-# Search results frame
 results_frame = tk.Frame(root, bg="#f0f0f0")
-results_frame.grid(row=2, column=0, columnspan=1, padx=15, pady=10, sticky="ws")
-
-# ListBox with scroll bar with all eligible recipes
-results_text_widget = tk.Listbox(results_frame, height=15, width=50)
+results_frame.grid(row=2, column=0, padx=15, pady=5, sticky="nw")
+results_text_widget = tk.Listbox(results_frame, height=20, width=50)
 results_text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-scrollbar = tk.Scrollbar(results_frame, orient=tk.VERTICAL)
+scrollbar = tk.Scrollbar(results_frame, orient=tk.VERTICAL, command=results_text_widget.yview)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 results_text_widget.config(yscrollcommand=scrollbar.set)
-scrollbar.config(command=results_text_widget.yview)
 
-# Function to populate listbox with all recipes (initial load)
+# ===================== RIGHT SIDE =====================
+recipe_display = Text(root, width=50, height=25)
+recipe_display.grid(row=0, column=1, rowspan=3, padx=10, pady=10, sticky="n")
+
+# ===================== FUNCTIONS =====================
 def populate_all_recipes():
     results_text_widget.delete(0, END)
     for recipe in RecipeLogic.book.recipes:
         results_text_widget.insert(END, recipe.recipeName)
 
-# Load all recipes initially
+def on_recipe_click(event):
+    selected = results_text_widget.curselection()
+    if not selected:
+        return
+    index = selected[0]
+    recipe = RecipeLogic.book.recipes[index]
+    recipe_display.delete("1.0", END)
+    text = f"Recipe Name: {recipe.recipeName}\n\nIngredients:\n"
+    for ing in recipe.ingredients:
+        text += f" - {ing}\n"
+    text += f"\nInstructions:\n{recipe.instructions}"
+    recipe_display.insert(END, text)
+
+results_text_widget.bind("<<ListboxSelect>>", on_recipe_click)
 populate_all_recipes()
 
 def search_recipes():
-    search_term = search_box.get().strip()
-    
-    # If search term is empty, show all recipes
-    if not search_term:
+    term = search_box.get().strip()
+    if not term:
         populate_all_recipes()
         return
-        
-    results = RecipeLogic.update_search(
-        search_term,
-        nut_checkbox_var.get(),
-        dairy_checkbox_var.get(),
-        gluten_checkbox_var.get()
-    )
-
-    # Clear previous results
+    results = RecipeLogic.update_search(term, nut_checkbox_var.get(), dairy_checkbox_var.get(), gluten_checkbox_var.get())
     results_text_widget.delete(0, END)
-
-    # Insert new results
     for recipe in results:
         results_text_widget.insert(END, recipe.recipeName)
 
-search_button = Button(search_frame, text="Search", command=search_recipes)
-search_button.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
+search_button.config(command=search_recipes)
+show_all_button.config(command=populate_all_recipes)
 
-show_all_button = Button(search_frame, text="Show All", command=populate_all_recipes)
-show_all_button.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
-
+# ===================== BOTTOM BUTTONS =====================
 button_frame1 = tk.Frame(root, bg="#ffffff", relief=tk.RAISED, bd=1)
-button_frame1.grid(row=3, column=0, columnspan=1, padx=15, pady=10, sticky="w")
-
+button_frame1.grid(row=3, column=0, padx=15, pady=10, sticky="w")
 add_recipe_button = Button(button_frame1, text="Add New Recipe", command=opens_new_window)
-add_recipe_button.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
-
-#right side of main window
+add_recipe_button.pack(side=tk.LEFT, padx=5, pady=5)
 
 button_frame2 = tk.Frame(root, bg="#ffffff", relief=tk.RAISED, bd=1)
-button_frame2.grid(row=3, column=2, columnspan=1, padx=15, pady=10, sticky="w")
+button_frame2.grid(row=3, column=1, padx=15, pady=10, sticky="w")
+save_list_button = Button(button_frame2, text="Save Ingredients", command=RecipeLogic.save_to_list)
+save_list_button.pack(side=tk.LEFT, padx=5, pady=5)
+clear_list_button = Button(button_frame2, text="Clear Grocery List", command=RecipeLogic.clear_grocery_list)
+clear_list_button.pack(side=tk.LEFT, padx=5, pady=5)
+generate_list_button = Button(button_frame2, text="Generate Grocery List", command=RecipeLogic.generate_grocery_list)
+generate_list_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-#save to list button
-#command=RecipeLogic.save_to_list()
-save_list_button = Button(button_frame2, text="Save Ingredients", )
-save_list_button.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
-
-#clear list button
-clear_list_button = Button(button_frame2, text="Clear Grocery List", command=RecipeLogic.clear_grocery_list())
-clear_list_button.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
-
-#generatelist button
-generate_list_button = Button(button_frame2, text="Generate Grocery List", command=RecipeLogic.generate_grocery_list())
-generate_list_button.pack(side=tk.LEFT, padx=5, pady=5, anchor="center", expand=True)
-# display selected recipe details when clicked?
-
-
-# run the event loop
+# ===================== RUN APP =====================
 root.mainloop()

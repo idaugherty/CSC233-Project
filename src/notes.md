@@ -19,6 +19,6 @@ anna
 - made add to grocery list button, clear grocery list button, and generate list button
 
 need to do:
-- display selected recipe info in the main homepage
+- display selected recipe info in the main homepage (DONE)
 - make the grocery list buttons functional
 - make pretty!!!
