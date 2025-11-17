@@ -1,4 +1,9 @@
 open in src folder 
+
+MUST RUN:
+pip install fpdf2
+in terminal before using application 
+
 use the following command to run the program:
 python RecipeGUI.py
 
@@ -19,6 +24,6 @@ anna
 - made add to grocery list button, clear grocery list button, and generate list button
 
 need to do:
-- display selected recipe info in the main homepage
-- make the grocery list buttons functional
+- display selected recipe info in the main homepage (DONE)
+- make the grocery list buttons functional (DONE)
 - make pretty!!!
