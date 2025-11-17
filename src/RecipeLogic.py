@@ -1,5 +1,6 @@
 from Classes.Recipe import Recipe
 from Classes.RecipeBook import RecipeBook
+from fpdf import FPDF
 
 # Maintain a RecipeBook instance for storing recipes
 book = RecipeBook()
@@ -69,5 +70,15 @@ def clear_grocery_list():
 
 #generate grocery list from selected recipes
 def generate_grocery_list():
-    print("List Generated")
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(0, 10, "Grocery List", ln=True, align="C")
+    pdf.ln(10)
+
+    pdf.set_font("Arial", '', 12)
+    for recipe in grocery_list:
+          for ingredient in recipe.ingredients:
+              pdf.cell(200, 10, txt=f"{ingredient}", ln=True, align="L")
+    pdf.output("groceryList.pdf")
    

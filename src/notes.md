@@ -1,4 +1,9 @@
 open in src folder 
+
+MUST RUN:
+pip install fpdf2
+in terminal before using application 
+
 use the following command to run the program:
 python RecipeGUI.py
 
@@ -20,5 +25,5 @@ anna
 
 need to do:
 - display selected recipe info in the main homepage (DONE)
-- make the grocery list buttons functional
+- make the grocery list buttons functional (DONE)
 - make pretty!!!
